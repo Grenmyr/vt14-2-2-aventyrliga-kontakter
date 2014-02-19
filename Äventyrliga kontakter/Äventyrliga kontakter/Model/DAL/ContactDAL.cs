@@ -10,8 +10,6 @@ namespace Äventyrliga_kontakter.Model.DAL
     // contactDAL är av baLBase
     public class ContactDAL : DALBase
     {
-
-
         public Contact GetContactById(int contactId)
         {  // Skapar och initierar ett anslutningsobjekt.
             using (SqlConnection conn = CreateConnection())
@@ -40,10 +38,7 @@ namespace Äventyrliga_kontakter.Model.DAL
                                 EmailAddress = reader.GetString(emailIndex)
                             };
                         }
-                        else
-                        {
-                            return null;
-                        }                       
+                        return null;
                     }
                 }
                 catch
@@ -103,7 +98,6 @@ namespace Äventyrliga_kontakter.Model.DAL
         }
 
         public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount) { throw new NotImplementedException("Härifrån ska jag hämta en hur lång min lista är"); }
-
 
         public void InsertContact(Contact contact)
         {
