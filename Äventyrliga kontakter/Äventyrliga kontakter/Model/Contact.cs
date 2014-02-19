@@ -7,10 +7,10 @@ namespace Äventyrliga_kontakter.Model
 {
     public class Contact
     {
-        public int ContacId { get; set; }
-        public int EmailAdress { get; set; }
-        public int FirstName { get; set; }
-        public int LastName { get; set; }
+        public int ContactId { get; set; }
+        public string EmailAddress { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
 
     }
 }

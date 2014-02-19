@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
+using System.Web.Configuration;
 
 namespace Äventyrliga_kontakter.Model.DAL
 {
-    abstract class DALBase
+    public abstract class DALBase
     {
         private static string _connectionString;
 
-        protected SqlConnection CreateConnection() { throw new NotImplementedException("här ska jag retunera en referens till mitt anslutningsobj"); }
+        protected SqlConnection CreateConnection() { return new SqlConnection(_connectionString); }
 
-        public static DALBase() 
+        static DALBase() 
         {
-            _connectionString = "här ska jag skicka in min anslutninssträng";
+            _connectionString = WebConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
         }
 
     }

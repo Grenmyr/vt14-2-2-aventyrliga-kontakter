@@ -1,27 +1,184 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
 namespace Äventyrliga_kontakter.Model.DAL
 {
-    public class ContactDAL
+    // contactDAL är av baLBase
+    public class ContactDAL : DALBase
     {
-        
 
-        public Contact GetContactById (int contactId){ throw new NotImplementedException("Här ska jag retunera enskild kontakt");}
 
-        public IEnumerable<Contact> GetContacts() { throw new NotImplementedException("Härifrån ska jag hämta en kontaktlista"); }
+        public Contact GetContactById(int contactId)
+        {  // Skapar och initierar ett anslutningsobjekt.
+            using (SqlConnection conn = CreateConnection())
+            {
+                try
+                {   // Se metod GetContacs för kommentarer.
+                    var cmd = new SqlCommand("app.uspGetContacts", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        var contactIdIndex = reader.GetOrdinal("ContactId");
+                        var firstNameIndex = reader.GetOrdinal("FirstName");
+                        var lastNameIndex = reader.GetOrdinal("LastName");
+                        var emailIndex = reader.GetOrdinal("EmailAddress");
+
+                        if (reader.Read())
+                        {
+                            return new Contact
+                            {
+                                ContactId = reader.GetInt32(contactIdIndex),
+                                FirstName = reader.GetString(firstNameIndex),
+                                LastName = reader.GetString(lastNameIndex),
+                                EmailAddress = reader.GetString(emailIndex)
+                            };
+                        }
+                        else
+                        {
+                            return null;
+                        }                       
+                    }
+                }
+                catch
+                {
+                    throw new ApplicationException("Ett fel har skett i DAL");
+                }
+            }
+        }
+
+        public IEnumerable<Contact> GetContacts()
+        {  // Skapar och initierar ett anslutningsobjekt.
+            using (var conn = CreateConnection())
+            {
+                try
+                {
+                    // Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
+                    var contacts = new List<Contact>(100);
+
+                    // Skapar och initierar ett SqlCommand-objekt som används till att
+                    // exekveras specifierad lagrad procedur.
+                    var cmd = new SqlCommand("app.uspGetContacts", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+
+                    // Den lagrade proceduren innehåller en SELECT-sats som kan returnera flera poster varför
+                    // ett SqlDataReader-objekt måste ta hand om alla poster. Metoden ExecuteReader skapar ett
+                    // SqlDataReader-objekt och returnerar en referens till objektet.
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        var contactIdIndex = reader.GetOrdinal("ContactId");
+                        var firstNameIndex = reader.GetOrdinal("FirstName");
+                        var lastNameIndex = reader.GetOrdinal("LastName");
+                        var emailIndex = reader.GetOrdinal("EmailAddress");
+
+                        while (reader.Read())
+                        {
+                            // Hämtar ut datat för en post. Använder GetXxx-metoder - vilken beror av typen av data.
+                            // Du måste känna till SQL-satsen för att kunna välja rätt GetXxx-metod.
+                            contacts.Add(new Contact
+                            {
+                                ContactId = reader.GetInt32(contactIdIndex),
+                                FirstName = reader.GetString(firstNameIndex),
+                                LastName = reader.GetString(lastNameIndex),
+                                EmailAddress = reader.GetString(emailIndex)
+                            });
+                        }
+                    }
+                    contacts.TrimExcess();
+                    return contacts;
+                }
+                catch
+                {
+                    throw new ApplicationException("Ett fel har skett i DAL");
+                }
+            }
+        }
 
         public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount) { throw new NotImplementedException("Härifrån ska jag hämta en hur lång min lista är"); }
 
-        
-        public void InsertContact(Contact contact) { /*Metod för  köra lagrad procedur med*/ }
+
+        public void InsertContact(Contact contact)
+        {
+            using (SqlConnection conn = CreateConnection())
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("app.uspInsertContact", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 50).Value = contact.FirstName;
+                    cmd.Parameters.Add("@LastName", SqlDbType.VarChar, 50).Value = contact.LastName;
+                    cmd.Parameters.Add("@EmailAddress", SqlDbType.VarChar, 50).Value = contact.EmailAddress;
+
+                    // Den här parametern är lite speciell. Den skickar inte något data till den lagrade proceduren,
+                    // utan hämtar data från den. (Fungerar ungerfär som ref- och out-prameterar i C#.) Värdet
+                    // parametern kommer att ha EFTER att den lagrade proceduren exekverats är primärnycklens värde
+                    // den nya posten blivit tilldelad av databasen.
+                    cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
+
+                    conn.Open();
+
+                    // Den lagrade proceduren innehåller en INSERT-sats och returnerar inga poster varför metoden
+                    // ExecuteNonQuery används för att exekvera den lagrade proceduren.
+                    cmd.ExecuteNonQuery();
+
+                    // Hämtar primärnyckelns värde för den nya posten och tilldelar contact-objektet värdet.
+                    contact.ContactId = (int)cmd.Parameters["@ContactID"].Value;
+                }
+                catch
+                {
+                    throw new ApplicationException("Ett fel har skett i DAL");
+                }
+            }
+        }
 
         public void DeleteContact(int contactId)
         {
-            /*Metod för  köra lagrad procedur med*/
+            using (SqlConnection conn = CreateConnection())
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("app.uspDeleteContact", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+
+                    // TODO: Implementera DeleteCustomer.
+                    throw new NotImplementedException();
+                }
+                catch
+                {
+                    throw new ApplicationException("Ett fel har skett i DAL");
+                }
+            }
         }
-        public void UpdateContact(Contact contact) { /*Metod för  köra lagrad procedur med*/ }
+        public void UpdateContact(Contact contact)
+        {
+            using (SqlConnection conn = CreateConnection())
+            {
+                try
+                {
+                    SqlCommand cmd = new SqlCommand("app.uspUpdateContact", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    conn.Open();
+
+                    // TODO: Implementera UpdateCustomer.
+                    throw new NotImplementedException();
+                }
+                catch
+                {
+                    throw new ApplicationException("Ett fel har skett i DAL");
+                }
+            }
+        }
     }
 }

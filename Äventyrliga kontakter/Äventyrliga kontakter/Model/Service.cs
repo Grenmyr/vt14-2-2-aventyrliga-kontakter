@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using Äventyrliga_kontakter.Model.DAL;
+//using Äventyrliga_kontakter.Model.DAL;
 
-
-namespace Äventyrliga_kontakter.Model
+// lag till DAL
+namespace Äventyrliga_kontakter.Model.DAL
 {
     public class Service
     {
 
         private ContactDAL _contactDAL;
 
-        public ContactDAL ContacDAL { get; private set; }
+        public ContactDAL ContacDAL
+        {
+            get { return _contactDAL ?? (_contactDAL = new ContactDAL()); }
+        }
+
 
         public void DeleteContact(Contact contact)
         {
@@ -20,11 +24,13 @@ namespace Äventyrliga_kontakter.Model
 
         public void DeleteContact(int contactId)
         {
+            //ContactDAL.DeleteContact(contactId);
         }
 
         public Contact GetContact(int contactId)
         {
-            throw new NotImplementedException();
+            //return ContactDAL.GetContactById(contactId);
+            throw new NotImplementedException("dsadsadsa");
         }
 
         public IEnumerable<Contact> GetContacts()
