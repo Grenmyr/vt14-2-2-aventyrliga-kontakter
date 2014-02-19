@@ -22,22 +22,6 @@ namespace Äventyrliga_kontakter
 
         }
 
-        public void ContactListView_InsertItem()
-        {
-            Service.GetContact(10);
-
-        }
-
-        // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_DeleteItem(int id)
-        {
-
-        }
-
-        // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_UpdateItem(int id)
-        {
-
+      
         }
     }
-}

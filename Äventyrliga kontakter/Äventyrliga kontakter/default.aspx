@@ -11,12 +11,15 @@
     <form id="form1" runat="server">
         <div>
             <asp:ValidationSummary ID="ValidationSummary" runat="server" />
-            <asp:ListView ItemType="Äventyrliga kontakter.Model.Contact"
+            <%-- Generera ut hanterarmetoder till code behind filen som heter default.aspx.cs --%>
+            <asp:ListView ItemType="Äventyrliga_kontakter.Model.Contact"
                 ID="ContactListView" runat="server"
+                SelectMethod="ContactListView_GetData"
                 InsertMethod="ContactListView_InsertItem"
                 DeleteMethod="ContactListView_DeleteItem"
                 UpdateMethod="ContactListView_UpdateItem"
-                DataKeyNames="ContactID">
+                DataKeyNames="ContactID"
+                InsertItemPosition="FirstItem">
                 <LayoutTemplate>
                     <table>
                         <tr>
