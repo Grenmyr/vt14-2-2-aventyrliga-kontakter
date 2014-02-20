@@ -52,14 +52,14 @@ namespace Äventyrliga_kontakter.Model.DAL
         {  // Skapar och initierar ett anslutningsobjekt.
             using (var conn = CreateConnection())
             {
-                try
+              try
                 {
                     // Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
                     var contacts = new List<Contact>(100);
 
                     // Skapar och initierar ett SqlCommand-objekt som används till att
                     // exekveras specifierad lagrad procedur.
-                    var cmd = new SqlCommand("app.uspGetContacts", conn);
+                    var cmd = new SqlCommand("Person.uspGetContacts", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     conn.Open();

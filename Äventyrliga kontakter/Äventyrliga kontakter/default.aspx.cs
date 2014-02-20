@@ -28,9 +28,9 @@ namespace Äventyrliga_kontakter
         //     int startRowIndex
         //     out int totalRowCount
         //     string sortByExpression
-        public IQueryable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData()
+        public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData()
         {
-            return null;
+           return Service.GetContacts();
         }
 
         public void ContactListView_InsertItem()
