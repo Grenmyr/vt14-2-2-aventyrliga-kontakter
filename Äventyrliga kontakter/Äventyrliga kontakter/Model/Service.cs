@@ -30,7 +30,7 @@ namespace Äventyrliga_kontakter.Model
         public Contact GetContact(int contactId)
         {
             return ContactDAL.GetContactById(contactId);
-          
+
         }
         /// Hämtar alla kontrakt som finns lagrade i databasen.
         public IEnumerable<Contact> GetContacts()
@@ -40,6 +40,17 @@ namespace Äventyrliga_kontakter.Model
 
         public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount) { throw new NotImplementedException(); }
 
-        public void SaveContact(Contact contact) { }
+        public void SaveContact(Contact contact)
+        {
+            // Om inte skapad post retuneras null.
+            if (contact.ContactId == 0)
+            {
+                ContactDAL.InsertContact(contact);
+            }
+            else
+            {
+                ContactDAL.UpdateContact(contact);
+            }
+        }
     }
 }

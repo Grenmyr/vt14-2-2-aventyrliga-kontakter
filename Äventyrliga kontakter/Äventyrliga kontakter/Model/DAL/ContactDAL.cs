@@ -52,7 +52,7 @@ namespace Äventyrliga_kontakter.Model.DAL
         {  // Skapar och initierar ett anslutningsobjekt.
             using (var conn = CreateConnection())
             {
-              try
+                try
                 {
                     // Skapar det List-objekt som initialt har plats för 100 referenser till Customer-objekt.
                     var contacts = new List<Contact>(100);
@@ -105,7 +105,7 @@ namespace Äventyrliga_kontakter.Model.DAL
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("app.uspInsertContact", conn);
+                    SqlCommand cmd = new SqlCommand("Person.uspAddContact", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 50).Value = contact.FirstName;
@@ -140,7 +140,7 @@ namespace Äventyrliga_kontakter.Model.DAL
             {
                 try
                 {
-                    SqlCommand cmd = new SqlCommand("app.uspDeleteContact", conn);
+                    SqlCommand cmd = new SqlCommand("Person.uspRemoveContact", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     conn.Open();
@@ -158,20 +158,31 @@ namespace Äventyrliga_kontakter.Model.DAL
         {
             using (SqlConnection conn = CreateConnection())
             {
-                try
-                {
-                    SqlCommand cmd = new SqlCommand("app.uspUpdateContact", conn);
-                    cmd.CommandType = CommandType.StoredProcedure;
+                //try
+                //{
+                SqlCommand cmd = new SqlCommand("Person.uspUpdateContact", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
 
-                    conn.Open();
+                cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 50).Value = contact.FirstName;
+                cmd.Parameters.Add("@LastName", SqlDbType.VarChar, 50).Value = contact.LastName;
+                cmd.Parameters.Add("@EmailAddress", SqlDbType.VarChar, 50).Value = contact.EmailAddress;
+                cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Value = contact.ContactId; 
+               
 
-                    // TODO: Implementera UpdateCustomer.
-                    throw new NotImplementedException();
-                }
-                catch
-                {
-                    throw new ApplicationException("Ett fel har skett i DAL");
-                }
+               
+
+                conn.Open();
+
+                cmd.ExecuteNonQuery();
+
+               
+                // TODO: Implementera UpdateCustomer.
+                throw new NotImplementedException();
+                //    }
+                //    catch
+                //    {
+                //        throw new ApplicationException("Ett fel har skett i DAL");
+                //    }
             }
         }
     }

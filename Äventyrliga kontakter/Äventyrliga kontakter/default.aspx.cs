@@ -11,8 +11,9 @@ namespace Äventyrliga_kontakter
     public partial class _default : System.Web.UI.Page
     {
         private Service _service;
-       
-        private Service Service  
+
+        // Egenskap för skapa Service referens endast om det behövs.
+        private Service Service
         {
             get { return _service ?? (_service = new Service()); }
         }
@@ -22,53 +23,74 @@ namespace Äventyrliga_kontakter
 
         }
 
-        // The return type can be changed to IEnumerable, however to support
-        // paging and sorting, the following parameters must be added:
-        //     int maximumRows
-        //     int startRowIndex
-        //     out int totalRowCount
-        //     string sortByExpression
+        // Genererar alla kontakter.
         public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData()
         {
-           return Service.GetContacts();
+            return Service.GetContacts();
         }
 
-        public void ContactListView_InsertItem()
+        public void ContactListView_InsertItem(Contact contact)
         {
-            var item = new Äventyrliga_kontakter.Model.Contact();
-            TryUpdateModel(item);
-            if (ModelState.IsValid)
-            {
-                // Save changes here
-
-            }
+            // Metod för lägga in kontakter till min databas.
+            
+            // TODO: Ska lägga in isvalid här sen.
+            
+                try
+                {
+                    Service.SaveContact(contact);
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Läggas till.");
+                }
+            
         }
 
         // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_UpdateItem(int id)
+        public void ContactListView_UpdateItem(int contactId)
         {
-            Äventyrliga_kontakter.Model.Contact item = null;
-            // Load the item here, e.g. item = MyDataLayer.Find(id);
-            if (item == null)
+            try
             {
-                // The item wasn't found
-                ModelState.AddModelError("", String.Format("Item with id {0} was not found", id));
-                return;
-            }
-            TryUpdateModel(item);
-            if (ModelState.IsValid)
-            {
-                // Save changes here, e.g. MyDataLayer.SaveChanges();
+                var contact = Service.GetContact(contactId);
+                if (Service.GetContact(contactId) == null)
+                {
+                     //varför är string emty bättre.
+                    ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
+                    return;
+                }
+
+               // TODO: Ska lägga in isvalid här sen.
+
+                    // Chanser, tryupdatemodel försöker spara min kontakt i min tabell. om true så sparar jag även i mitt affärslager.
+                    if (TryUpdateModel(contact))
+                    {
+                        ContactListView.EnableViewState = true;
+                        Service.SaveContact(contact);
+                    }
+                
 
             }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Sparas.");
+            }
+
         }
 
         // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_DeleteItem(int id)
+        public void ContactListView_DeleteItem(int contactId)
         {
-
+            // TODO:
+            try
+            {
+                Service.DeleteContact(contactId);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Raderas.");
+            }
         }
 
-      
-        }
+
     }
+}

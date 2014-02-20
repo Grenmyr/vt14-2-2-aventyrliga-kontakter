@@ -18,7 +18,7 @@
                 UpdateMethod="ContactListView_UpdateItem"
                 DeleteMethod="ContactListView_DeleteItem"
                 DataKeyNames="ContactID"
-                InsertItemPosition="FirstItem">
+                InsertItemPosition="FirstItem" ViewStateMode="Enabled">
 
                 <%-- Tom tabell som ska fyllas. --%>
                 <LayoutTemplate>
@@ -76,11 +76,30 @@
                         </td>
                         <td class="TopCommand">
                             <%-- Knappar för att kunna lägga till eller avbryta ändring av textfälten på toppen. Lägga till ska valideras andra ej. --%>
-                            <asp:LinkButton runat="server"  CommandName="Insert" Text="Lägg till"></asp:LinkButton>
-                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Ta bort" Text="Redigera"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CommandName="Insert" Text="Lägg till"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Cancel" Text="Rensa"></asp:LinkButton>
                         </td>
                     </tr>
                 </InsertItemTemplate>
+                <EditItemTemplate>
+                    <%-- Här redigerar jag kunduppgifter. samma ID men funkar eftersom dem inte används samtidigt som insertitemtemplate --%>
+                    <tr>
+                        <td>
+                            <asp:TextBox ID="FirstName" runat="server" Text='<%# BindItem.FirstName %>'></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="LastName" runat="server" Text='<%# BindItem.LastName %>'></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="EmailAddress" runat="server" Text='<%# BindItem.EmailAddress %>'></asp:TextBox>
+                        </td>
+                        <td>
+                            <%-- Knappar för uppdatera en kunduppgift och avbryta. --%>
+                            <asp:LinkButton runat="server" CommandName="Update" Text="Spara"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CommandName="Cancel" Text="Ångra" CausesValidation="false"></asp:LinkButton>
+                        </td>
+                    </tr>
+                </EditItemTemplate>
             </asp:ListView>
         </div>
     </form>
