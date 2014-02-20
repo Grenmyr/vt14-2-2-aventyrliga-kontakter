@@ -17,8 +17,8 @@
                 InsertMethod="ContactListView_InsertItem"
                 UpdateMethod="ContactListView_UpdateItem"
                 DeleteMethod="ContactListView_DeleteItem"
-                DataKeyNames="ContactID">
-               <%-- InsertItemPosition="FirstItem">--%>
+                DataKeyNames="ContactID"
+                InsertItemPosition="FirstItem">
 
                 <%-- Tom tabell som ska fyllas. --%>
                 <LayoutTemplate>
@@ -45,12 +45,42 @@
                         <td>
                             <%# Item.EmailAddress %> 
                         </td>
-                        <td class="command" >
-                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Delete" Text="Radera"></asp:LinkButton >
+                        <td class="SidoCommand">
+                            <%-- Knappar för ta bort och redigera kontaktuppgifter, det är dessa som renderas till höger i tabellen. --%>
+                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Delete" Text="Radera"></asp:LinkButton>
                             <asp:LinkButton runat="server" CausesValidation="false" CommandName="Edit" Text="Redigera"></asp:LinkButton>
                         </td>
                     </tr>
                 </ItemTemplate>
+                <EmptyDataTemplate>
+                    <%-- Om nulldata --%>
+                    <table>
+                        <tr>
+                            <td>Kontaktuppgifter saknas.
+                            </td>
+                        </tr>
+                    </table>
+                </EmptyDataTemplate>
+                <InsertItemTemplate>
+                    <%-- Här ska mallen för raderna som man kan lägga in nya kontaktuppgifter vara. Hänger ihop med min FIrstItemPosition egenskap till listview --%>
+                    <%-- Dessa renderas i toppen i min tabelll eftersom jag använder firstitemposition. --%>
+                    <tr>
+                        <td>
+                            <asp:TextBox ID="FirstName" runat="server" Text='<%# BindItem.FirstName %>'></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="LastName" runat="server" Text='<%# BindItem.LastName %>'></asp:TextBox>
+                        </td>
+                        <td>
+                            <asp:TextBox ID="EmailAddress" runat="server" Text='<%# BindItem.EmailAddress %>'></asp:TextBox>
+                        </td>
+                        <td class="TopCommand">
+                            <%-- Knappar för att kunna lägga till eller avbryta ändring av textfälten på toppen. Lägga till ska valideras andra ej. --%>
+                            <asp:LinkButton runat="server"  CommandName="Insert" Text="Lägg till"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Ta bort" Text="Redigera"></asp:LinkButton>
+                        </td>
+                    </tr>
+                </InsertItemTemplate>
             </asp:ListView>
         </div>
     </form>
