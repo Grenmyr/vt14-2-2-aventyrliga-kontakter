@@ -97,7 +97,43 @@ namespace Äventyrliga_kontakter.Model.DAL
             }
         }
 
-        public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount) { throw new NotImplementedException("Härifrån ska jag hämta en hur lång min lista är"); }
+        public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount)
+        {
+            //Totalrowcount deklareras som null och efter connection läst klart så får den värde.
+            var contacts = new List<Contact>(100);
+
+            using (var conn = CreateConnection())
+            {
+                SqlCommand cmd = new SqlCommand("Person.uspGetContactsPageWise", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+               
+                cmd.Parameters.Add("@PageIndex", SqlDbType.Int, 4).Value = startRowIndex/maximumRows+1;
+                cmd.Parameters.Add("@PageSize", SqlDbType.Int, 4).Value = maximumRows;
+                cmd.Parameters.Add("@RecordCount", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
+                
+                conn.Open();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    var firstNameIndex = reader.GetOrdinal("FirstName");
+                    var lastNameIndex = reader.GetOrdinal("LastName");
+                    var emailIndex = reader.GetOrdinal("EmailAddress");
+                    
+
+                    while (reader.Read())
+                    {                       
+                        contacts.Add(new Contact
+                        {
+                            FirstName = reader.GetString(firstNameIndex),
+                            LastName = reader.GetString(lastNameIndex),
+                            EmailAddress = reader.GetString(emailIndex),                     
+                        });
+                    }
+                }
+                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value; 
+                contacts.TrimExcess();
+                return contacts;
+            }
+        }
 
         public void InsertContact(Contact contact)
         {
@@ -143,10 +179,11 @@ namespace Äventyrliga_kontakter.Model.DAL
                     SqlCommand cmd = new SqlCommand("Person.uspRemoveContact", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
+                    cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Value = contactId;
+
                     conn.Open();
 
-                    // TODO: Implementera DeleteCustomer.
-                    throw new NotImplementedException();
+                    cmd.ExecuteNonQuery();
                 }
                 catch
                 {
@@ -156,30 +193,29 @@ namespace Äventyrliga_kontakter.Model.DAL
         }
         public void UpdateContact(Contact contact)
         {
-            using (SqlConnection conn = CreateConnection())
+            try
             {
-                //try
-                //{
-                SqlCommand cmd = new SqlCommand("Person.uspUpdateContact", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                using (SqlConnection conn = CreateConnection())
+                {
+                    //try
+                    //{
+                    SqlCommand cmd = new SqlCommand("Person.uspUpdateContact", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 50).Value = contact.FirstName;
-                cmd.Parameters.Add("@LastName", SqlDbType.VarChar, 50).Value = contact.LastName;
-                cmd.Parameters.Add("@EmailAddress", SqlDbType.VarChar, 50).Value = contact.EmailAddress;
-                cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Value = contact.ContactId; 
-               
-                conn.Open();
+                    cmd.Parameters.Add("@FirstName", SqlDbType.VarChar, 50).Value = contact.FirstName;
+                    cmd.Parameters.Add("@LastName", SqlDbType.VarChar, 50).Value = contact.LastName;
+                    cmd.Parameters.Add("@EmailAddress", SqlDbType.VarChar, 50).Value = contact.EmailAddress;
+                    cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Value = contact.ContactId;
 
-                cmd.ExecuteNonQuery();
+                    conn.Open();
 
-               
-                // TODO: Implementera UpdateCustomer.
-              
-                //    }
-                //    catch
-                //    {
-                //        throw new ApplicationException("Ett fel har skett i DAL");
-                //    }
+                    cmd.ExecuteNonQuery();
+                }
+
+            }
+            catch
+            {
+                throw new ApplicationException("Ett fel har skett i DAL");
             }
         }
     }

@@ -33,6 +33,13 @@
                         </tr>
                         <asp:PlaceHolder ID="itemPlaceholder" runat="server"></asp:PlaceHolder>
                     </table>
+                    <asp:DataPager ID="DataPager" runat="server" PageSize="20" > 
+                       <Fields>
+                           <asp:NextPreviousPagerField />
+                           <asp:NumericPagerField />
+                          
+                       </Fields>
+                    </asp:DataPager>
                 </LayoutTemplate>
                 <ItemTemplate>
                     <tr>

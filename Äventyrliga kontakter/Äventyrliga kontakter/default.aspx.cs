@@ -24,26 +24,27 @@ namespace Äventyrliga_kontakter
         }
 
         // Genererar alla kontakter.
-        public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData()
+        public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData(int maximumRows, int startRowIndex, out int totalRowCount)
         {
-            return Service.GetContacts();
+            var fullContactList = Service.GetContacts();
+            return Service.GetContactsPageWise(maximumRows, startRowIndex, out totalRowCount);
         }
 
         public void ContactListView_InsertItem(Contact contact)
         {
             // Metod för lägga in kontakter till min databas.
-            
+
             // TODO: Ska lägga in isvalid här sen.
-            
-                try
-                {
-                    Service.SaveContact(contact);
-                }
-                catch (Exception)
-                {
-                    ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Läggas till.");
-                }
-            
+
+            try
+            {
+                Service.SaveContact(contact);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Läggas till.");
+            }
+
         }
 
         // The id parameter name should match the DataKeyNames value set on the control
@@ -59,15 +60,15 @@ namespace Äventyrliga_kontakter
                     return;
                 }
 
-               // TODO: Ska lägga in isvalid här sen.
+                // TODO: Ska lägga in isvalid här sen.
 
-                    // Chanser, tryupdatemodel försöker spara min kontakt i min tabell. om true så sparar jag även i mitt affärslager.
-                    if (TryUpdateModel(contact))
-                    {
-                        
-                        Service.SaveContact(contact);
-                    }
-                
+                // Chanser, tryupdatemodel försöker spara min kontakt i min tabell. om true så sparar jag även i mitt affärslager.
+                if (TryUpdateModel(contact))
+                {
+
+                    Service.SaveContact(contact);
+                }
+
 
             }
             catch (Exception)
