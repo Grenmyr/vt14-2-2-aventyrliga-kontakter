@@ -16,7 +16,7 @@ namespace Äventyrliga_kontakter.Model.DAL
             {
                 try
                 {   // Se metod GetContacs för kommentarer.
-                    var cmd = new SqlCommand("app.uspGetContacts", conn);
+                    var cmd = new SqlCommand("Person.uspGetContacts", conn);
                     cmd.CommandType = CommandType.StoredProcedure;
 
                     conn.Open();
@@ -168,9 +168,6 @@ namespace Äventyrliga_kontakter.Model.DAL
                 cmd.Parameters.Add("@EmailAddress", SqlDbType.VarChar, 50).Value = contact.EmailAddress;
                 cmd.Parameters.Add("@ContactID", SqlDbType.Int, 4).Value = contact.ContactId; 
                
-
-               
-
                 conn.Open();
 
                 cmd.ExecuteNonQuery();

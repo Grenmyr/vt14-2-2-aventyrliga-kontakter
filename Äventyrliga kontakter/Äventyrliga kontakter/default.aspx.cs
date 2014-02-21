@@ -54,7 +54,7 @@ namespace Äventyrliga_kontakter
                 var contact = Service.GetContact(contactId);
                 if (Service.GetContact(contactId) == null)
                 {
-                     //varför är string emty bättre.
+                    //varför är string emty bättre.
                     ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
                     return;
                 }
