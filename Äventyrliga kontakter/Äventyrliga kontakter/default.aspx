@@ -35,7 +35,7 @@
                     </table>
                     <asp:DataPager ID="DataPager" runat="server" PageSize="20" > 
                        <Fields>
-                           <asp:NextPreviousPagerField />
+                           <asp:NextPreviousPagerField ShowFirstPageButton="True" ShowLastPageButton="True"  />
                            <asp:NumericPagerField />
                           
                        </Fields>

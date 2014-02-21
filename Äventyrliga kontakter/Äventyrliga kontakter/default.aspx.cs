@@ -11,6 +11,7 @@ namespace Äventyrliga_kontakter
     public partial class _default : System.Web.UI.Page
     {
         private Service _service;
+        
 
         // Egenskap för skapa Service referens endast om det behövs.
         private Service Service
@@ -26,8 +27,10 @@ namespace Äventyrliga_kontakter
         // Genererar alla kontakter.
         public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData(int maximumRows, int startRowIndex, out int totalRowCount)
         {
-            var fullContactList = Service.GetContacts();
-            return Service.GetContactsPageWise(maximumRows, startRowIndex, out totalRowCount);
+            
+            //var fullContactList = Service.GetContacts();
+            
+            return Service.GetContactsPageWise(maximumRows, startRowIndex, out totalRowCount).OrderBy(c => c.FirstName);
         }
 
         public void ContactListView_InsertItem(Contact contact)

@@ -88,7 +88,7 @@ namespace Äventyrliga_kontakter.Model.DAL
                         }
                     }
                     contacts.TrimExcess();
-                    return contacts;
+                    return contacts.OrderBy(c => c.FirstName);
                 }
                 catch
                 {
@@ -114,10 +114,11 @@ namespace Äventyrliga_kontakter.Model.DAL
                 conn.Open();
                 using (var reader = cmd.ExecuteReader())
                 {
+                    var contactIdIndex = reader.GetOrdinal("ContactId");
                     var firstNameIndex = reader.GetOrdinal("FirstName");
                     var lastNameIndex = reader.GetOrdinal("LastName");
                     var emailIndex = reader.GetOrdinal("EmailAddress");
-                    
+                   
 
                     while (reader.Read())
                     {                       
@@ -129,8 +130,10 @@ namespace Äventyrliga_kontakter.Model.DAL
                         });
                     }
                 }
-                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value; 
+                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;
                 contacts.TrimExcess();
+                var pagememberCount = contacts.Count();
+                contacts.OrderBy(c => c.FirstName);
                 return contacts;
             }
         }
