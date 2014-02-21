@@ -130,10 +130,10 @@ namespace Äventyrliga_kontakter.Model.DAL
                         });
                     }
                 }
-                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;
+                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;               
                 contacts.TrimExcess();
-                var pagememberCount = contacts.Count();
-                contacts.OrderBy(c => c.FirstName);
+                //var pagememberCount = contacts.Count();
+                //contacts.OrderBy(c => c.FirstName);
                 return contacts;
             }
         }
