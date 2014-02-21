@@ -174,7 +174,7 @@ namespace Äventyrliga_kontakter.Model.DAL
 
                
                 // TODO: Implementera UpdateCustomer.
-                throw new NotImplementedException();
+              
                 //    }
                 //    catch
                 //    {

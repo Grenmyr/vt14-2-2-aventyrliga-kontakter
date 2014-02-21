@@ -64,7 +64,7 @@ namespace Äventyrliga_kontakter
                     // Chanser, tryupdatemodel försöker spara min kontakt i min tabell. om true så sparar jag även i mitt affärslager.
                     if (TryUpdateModel(contact))
                     {
-                        ContactListView.EnableViewState = true;
+                        
                         Service.SaveContact(contact);
                     }
                 
