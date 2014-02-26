@@ -124,6 +124,7 @@ namespace Äventyrliga_kontakter.Model.DAL
                     {                       
                         contacts.Add(new Contact
                         {
+                            ContactId = reader.GetInt32(contactIdIndex),
                             FirstName = reader.GetString(firstNameIndex),
                             LastName = reader.GetString(lastNameIndex),
                             EmailAddress = reader.GetString(emailIndex),                     
@@ -172,7 +173,6 @@ namespace Äventyrliga_kontakter.Model.DAL
                 }
             }
         }
-
         public void DeleteContact(int contactId)
         {
             using (SqlConnection conn = CreateConnection())
