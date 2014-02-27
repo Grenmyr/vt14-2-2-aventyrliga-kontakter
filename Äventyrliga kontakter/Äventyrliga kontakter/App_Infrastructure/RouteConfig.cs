@@ -11,6 +11,8 @@ namespace Äventyrliga_kontakter
         public static void SetRoute(RouteCollection route)
         {
             route.MapPageRoute("contact", "Start", "~/default.aspx");
+            route.MapPageRoute("Start", "Start", "~/");
+            route.MapPageRoute("error", "Error", "~/");
         }
     }
 }
