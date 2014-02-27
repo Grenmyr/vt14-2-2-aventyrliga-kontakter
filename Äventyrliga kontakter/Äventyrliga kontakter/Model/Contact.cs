@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Äventyrliga_kontakter.Model
 {
+
     public class Contact
     {
         public int ContactId { get; set; }
@@ -17,8 +18,9 @@ namespace Äventyrliga_kontakter.Model
         [Required(ErrorMessage = "Fält Förnamn får ej lämnas tomt.")]
         [StringLength(50, ErrorMessage = "Förnamn kan max vara 50 tecken långt.")]
         public string FirstName { get; set; }
-        [Required(ErrorMessage = "Fält får ej lämnas tomt.")]
+        [Required(ErrorMessage = "Fält EfterNamn får ej lämnas tomt.")]
         [StringLength(50, ErrorMessage = "EfterNamn kan max vara 50 tecken långt.")]
         public string LastName { get; set; }
+
     }
 }

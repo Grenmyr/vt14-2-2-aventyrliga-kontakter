@@ -42,23 +42,24 @@ namespace Äventyrliga_kontakter
                 {
                     ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Läggas till.");
                 }
+                Response.RedirectToRoute("contact");
             }
 
         }
 
         // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_UpdateItem(int contactId)
+        public void ContactListView_UpdateItem(Contact contact)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var contact = Service.GetContact(contactId);
-                    if (Service.GetContact(contactId) == null)
-                    {
-                        ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
-                        return;
-                    }
+                    //var contact = Service.GetContact(contactId);
+                    //if (Service.GetContact(contactId) == null)
+                    //{
+                    //    ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
+                    //    return;
+                    //}
                     // TODO: Ska lägga in isvalid här sen.
 
                     // Chanser, tryupdatemodel Validerar objktet Contact, eftersom vi hämtar det från server.

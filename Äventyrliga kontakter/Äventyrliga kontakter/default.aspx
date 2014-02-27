@@ -26,19 +26,21 @@
                         <tr>
                             <th>Förnamn
                             </th>
-                            <th>EfterNamn
+                            <th>Efternamn
                             </th>
                             <th>E-Post
                             </th>
                         </tr>
                         <asp:PlaceHolder ID="itemPlaceholder" runat="server"></asp:PlaceHolder>
                     </table>
-                    <asp:DataPager ID="DataPager" runat="server" PageSize="20" > 
-                       <Fields>
-                           <asp:NextPreviousPagerField ShowFirstPageButton="True" ShowLastPageButton="True"  />
-                           <asp:NumericPagerField />
-                          
-                       </Fields>
+                    <asp:DataPager ID="DataPager" runat="server" PageSize="20">
+                        <Fields>
+                            <asp:NextPreviousPagerField ShowFirstPageButton="True" FirstPageText="Start"
+                                ShowNextPageButton="False" ShowPreviousPageButton="False" />
+                            <asp:NumericPagerField NextPageText=">" PreviousPageText="<" ButtonCount="3" />
+                            <asp:NextPreviousPagerField ShowLastPageButton="True" LastPageText="Slut"
+                                ShowNextPageButton="False" ShowPreviousPageButton="False" />
+                        </Fields>
                     </asp:DataPager>
                 </LayoutTemplate>
                 <ItemTemplate>
@@ -54,7 +56,8 @@
                         </td>
                         <td class="SidoCommand">
                             <%-- Knappar för ta bort och redigera kontaktuppgifter, det är dessa som renderas till höger i tabellen. --%>
-                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Delete" Text="Radera"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CausesValidation="false" CommandName="Delete" Text="Radera"
+                                OnClientClick='<%# String.Format("return confirm(\"Ta Kontakten {0} {1} {2}?\")", Item.FirstName, Item.LastName, Item.EmailAddress) %>'></asp:LinkButton>
                             <asp:LinkButton runat="server" CausesValidation="false" CommandName="Edit" Text="Redigera"></asp:LinkButton>
                         </td>
                     </tr>

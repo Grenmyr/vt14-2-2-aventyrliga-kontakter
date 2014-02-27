@@ -100,7 +100,7 @@ namespace Äventyrliga_kontakter.Model.DAL
         public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount)
         {
             //Totalrowcount deklareras som null och efter connection läst klart så får den värde.
-            var contacts = new List<Contact>(100);
+            var contacts = new List<Contact>(maximumRows);
 
             using (var conn = CreateConnection())
             {
@@ -131,10 +131,7 @@ namespace Äventyrliga_kontakter.Model.DAL
                         });
                     }
                 }
-                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;               
-                contacts.TrimExcess();
-                //var pagememberCount = contacts.Count();
-                //contacts.OrderBy(c => c.FirstName);
+                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;
                 return contacts;
             }
         }
