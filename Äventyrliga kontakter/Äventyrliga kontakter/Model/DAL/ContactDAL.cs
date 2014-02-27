@@ -102,37 +102,44 @@ namespace Äventyrliga_kontakter.Model.DAL
             //Totalrowcount deklareras som null och efter connection läst klart så får den värde.
             var contacts = new List<Contact>(maximumRows);
 
-            using (var conn = CreateConnection())
+            try
             {
-                SqlCommand cmd = new SqlCommand("Person.uspGetContactsPageWise", conn);
-                cmd.CommandType = CommandType.StoredProcedure;
-               
-                cmd.Parameters.Add("@PageIndex", SqlDbType.Int, 4).Value = startRowIndex/maximumRows+1;
-                cmd.Parameters.Add("@PageSize", SqlDbType.Int, 4).Value = maximumRows;
-                cmd.Parameters.Add("@RecordCount", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
-                
-                conn.Open();
-                using (var reader = cmd.ExecuteReader())
+                using (var conn = CreateConnection())
                 {
-                    var contactIdIndex = reader.GetOrdinal("ContactId");
-                    var firstNameIndex = reader.GetOrdinal("FirstName");
-                    var lastNameIndex = reader.GetOrdinal("LastName");
-                    var emailIndex = reader.GetOrdinal("EmailAddress");
-                   
+                    SqlCommand cmd = new SqlCommand("Person.uspGetContactsPageWise", conn);
+                    cmd.CommandType = CommandType.StoredProcedure;
 
-                    while (reader.Read())
-                    {                       
-                        contacts.Add(new Contact
+                    cmd.Parameters.Add("@PageIndex", SqlDbType.Int, 4).Value = startRowIndex / maximumRows + 1;
+                    cmd.Parameters.Add("@PageSize", SqlDbType.Int, 4).Value = maximumRows;
+                    cmd.Parameters.Add("@RecordCount", SqlDbType.Int, 4).Direction = ParameterDirection.Output;
+
+                    conn.Open();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        var contactIdIndex = reader.GetOrdinal("ContactId");
+                        var firstNameIndex = reader.GetOrdinal("FirstName");
+                        var lastNameIndex = reader.GetOrdinal("LastName");
+                        var emailIndex = reader.GetOrdinal("EmailAddress");
+
+
+                        while (reader.Read())
                         {
-                            ContactId = reader.GetInt32(contactIdIndex),
-                            FirstName = reader.GetString(firstNameIndex),
-                            LastName = reader.GetString(lastNameIndex),
-                            EmailAddress = reader.GetString(emailIndex),                     
-                        });
+                            contacts.Add(new Contact
+                            {
+                                ContactId = reader.GetInt32(contactIdIndex),
+                                FirstName = reader.GetString(firstNameIndex),
+                                LastName = reader.GetString(lastNameIndex),
+                                EmailAddress = reader.GetString(emailIndex),
+                            });
+                        }
                     }
+                    totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;
+                    return contacts;
                 }
-                totalRowCount = (int)cmd.Parameters["@RecordCount"].Value;
-                return contacts;
+            }
+            catch 
+            {
+                throw new ApplicationException("Ett fel har skett i DAL");
             }
         }
 

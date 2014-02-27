@@ -20,7 +20,7 @@ namespace Äventyrliga_kontakter
         }
         protected void Page_Load(object sender, EventArgs e)
         {
-
+           
         }
         // Genererar alla kontakter.
         public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData(int maximumRows, int startRowIndex, out int totalRowCount)
@@ -31,7 +31,6 @@ namespace Äventyrliga_kontakter
 
         public void ContactListView_InsertItem(Contact contact)
         {
-            // Metod för lägga in kontakter till min databas. FATTTAR INTE MODELSTATE
             if (ModelState.IsValid)
             {
                 try
@@ -60,7 +59,6 @@ namespace Äventyrliga_kontakter
                     //    ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
                     //    return;
                     //}
-                    // TODO: Ska lägga in isvalid här sen.
 
                     // Chanser, tryupdatemodel Validerar objktet Contact, eftersom vi hämtar det från server.
                     if (TryUpdateModel(contact))
@@ -78,7 +76,6 @@ namespace Äventyrliga_kontakter
         // The id parameter name should match the DataKeyNames value set on the control
         public void ContactListView_DeleteItem(int contactId)
         {
-            // TODO:
             try
             {
                 Service.DeleteContact(contactId);
