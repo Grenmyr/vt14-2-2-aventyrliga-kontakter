@@ -45,6 +45,7 @@ namespace Äventyrliga_kontakter.Model
 
         public void SaveContact(Contact contact)
         {
+            // här.
             // Om inte skapad post retuneras null.
             if (contact.ContactId == 0)
             {
