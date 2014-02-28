@@ -10,7 +10,7 @@
     <h1>Äventyrliga kontakter</h1>
     <p>Ett oväntat fel har tyvärr inträffat, Gå tillbaka till startsida och försök igen.</p>
     <p>
-        <a href='<%$ RouteUrl:routename=contact %>' runat="server">Tillbaka till startsidan</a>
+        <a href='<%$ RouteUrl:routename=Start %>' runat="server">Tillbaka till startsidan</a>
     </p>
     <%-- Fixa länk tillbaka till startsida.  --%>
     <form id="form1" runat="server" visible="false">
