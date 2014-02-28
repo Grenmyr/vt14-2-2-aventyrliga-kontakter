@@ -5,17 +5,24 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title></title>
+    <link href="Style/style.css" rel="stylesheet" />
 </head>
 <body>
     <h1>Äventyrliga kontakter</h1>
+    <div id="moose"><img src="Style/moose.gif"/></div>
+    
     <form id="form1" runat="server">
         <div>
-            <asp:ValidationSummary ID="ValidationSummary" runat="server" />
+               <%-- ValidationSummary för de 2 olika validationgrupperna. Samt Rättmeddelande under. --%>
+            <asp:ValidationSummary ID="ValidationSummary" ValidationGroup="Insert" runat="server" />
+            <asp:ValidationSummary ID="ValidationSummary1" ValidationGroup="Update" runat="server" />
+
+             <%-- Placeholder to handle confirmationmessages. --%>
+            <asp:PlaceHolder ID="PlaceHolder" runat="server" Visible="false" > <asp:Literal ID="ConfirmationMessage" runat="server"></asp:Literal></asp:PlaceHolder>
+            
+
             <%-- Listview med autoimplementerade hanterarmetoder. --%>
-            <%-- Validering på Clienten. --%>
-
-
-            <asp:ListView ItemType="Äventyrliga_kontakter.Model.Contact" runat="server" ID="ContactListView"
+            <asp:ListView ItemType="Äventyrliga_kontakter.Model.Contact" runat="server" ID="ContactListView" 
                 SelectMethod="ContactListView_GetData"
                 InsertMethod="ContactListView_InsertItem"
                 UpdateMethod="ContactListView_UpdateItem"
@@ -23,10 +30,8 @@
                 DataKeyNames="ContactID"
                 InsertItemPosition="FirstItem" ViewStateMode="Enabled">
 
-
                 <%-- Tom tabell som ska fyllas. --%>
                 <LayoutTemplate>
-
                     <table>
                         <tr>
                             <th>Förnamn
@@ -40,16 +45,15 @@
                     </table>
                     <asp:DataPager ID="DataPager" runat="server" PageSize="20">
                         <Fields>
-                            <asp:NextPreviousPagerField ShowFirstPageButton="True" FirstPageText="Start"
+                            <asp:NextPreviousPagerField ShowFirstPageButton="True" FirstPageText="Start" ButtonCssClass="nav"
                                 ShowNextPageButton="False" ShowPreviousPageButton="False" />
-                            <asp:NumericPagerField NextPageText=">" PreviousPageText="<" ButtonCount="3" />
-                            <asp:NextPreviousPagerField ShowLastPageButton="True" LastPageText="Slut"
+                            <asp:NumericPagerField NextPageText=">" PreviousPageText="<" ButtonCount="3"  />
+                            <asp:NextPreviousPagerField ShowLastPageButton="True" LastPageText="Slut"  ButtonCssClass="nav"
                                 ShowNextPageButton="False" ShowPreviousPageButton="False" />
                         </Fields>
                     </asp:DataPager>
                 </LayoutTemplate>
                 <ItemTemplate>
-
                     <tr>
                         <td>
                             <%# Item.FirstName %>
@@ -61,6 +65,7 @@
                             <%# Item.EmailAddress %> 
                         </td>
                         <td class="SidoCommand">
+
                             <%-- Knappar för ta bort och redigera kontaktuppgifter, det är dessa som renderas till höger i tabellen. --%>
                             <asp:LinkButton runat="server" CausesValidation="false" CommandName="Delete" Text="Radera"
                                 OnClientClick='<%# String.Format("return confirm(\"Ta Kontakten {0} {1} {2}?\")", Item.FirstName, Item.LastName, Item.EmailAddress) %>'></asp:LinkButton>
@@ -78,9 +83,16 @@
                     </table>
                 </EmptyDataTemplate>
                 <InsertItemTemplate>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" ValidationGroup="CP" runat="server" ErrorMessage="Förnamn fältet får ej lämnas tomt." ControlToValidate="FirstName" Text="*"></asp:RequiredFieldValidator>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" ValidationGroup="CP" runat="server" ErrorMessage="Efternamn fältet får ej lämnas tomt." ControlToValidate="LastName" Text="*"></asp:RequiredFieldValidator>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" ValidationGroup="CP" runat="server" ErrorMessage="E-Post fältet får ej lämnas tomt1." ControlToValidate="EmailAddress" Text="*" Display="Dynamic"></asp:RequiredFieldValidator>
+
+                       <%-- 4 Kontroller som jobbar mot Insert och validationgroup="Insert". --%>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator3" runat="server" ErrorMessage="Förnamn fältet får ej lämnas tomt." ControlToValidate="FirstName" Text="*" ValidationGroup="Insert"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator2" runat="server" ErrorMessage="Efternamn fältet får ej lämnas tomt." ControlToValidate="LastName" Text="*" ValidationGroup="Insert"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" ErrorMessage="E-Post fältet får ej lämnas tomt." ControlToValidate="EmailAddress" Text="*" ValidationGroup="Insert"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="RequiredFieldValidator4" runat="server" 
+                        ErrorMessage="RegularExpressionValidator1" 
+                        ControlToValidate="EmailAddress" Text="*" ValidationGroup="Insert"
+                        ValidationExpression="^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$" 
+                        Display="Dynamic"></asp:RegularExpressionValidator>
 
                     <%-- Här ska mallen för raderna som man kan lägga in nya kontaktuppgifter vara. Hänger ihop med min FIrstItemPosition egenskap till listview --%>
                     <%-- Dessa renderas i toppen i min tabelll eftersom jag använder firstitemposition. --%>
@@ -96,17 +108,19 @@
                         </td>
                         <td class="TopCommand">
                             <%-- Knappar för att kunna lägga till eller avbryta ändring av textfälten på toppen. Lägga till ska valideras andra ej. --%>
-                            <asp:LinkButton runat="server" CommandName="Insert" Text="Lägg till"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CommandName="Insert" Text="Lägg till" ValidationGroup="Insert"></asp:LinkButton>
                             <asp:LinkButton runat="server" CausesValidation="false" CommandName="Cancel" Text="Rensa"></asp:LinkButton>
                         </td>
                     </tr>
                 </InsertItemTemplate>
                 <EditItemTemplate>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Förnamn fältet får ej lämnas tomt." ControlToValidate="FirstName" Text="*"></asp:RequiredFieldValidator>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ErrorMessage="Efternamn fältet får ej lämnas tomt." ControlToValidate="LastName" Text="*"></asp:RequiredFieldValidator>
-                    <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ErrorMessage="E-Post fältet får ej lämnas tomt2." ControlToValidate="EmailAddress" Text="*"></asp:RequiredFieldValidator>
-                    <%--      <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ErrorMessage="RegularExpressionValidator" ControlToValidate="EmailAddress" ValidationExpression="^(?(&quot;&quot;)(&quot;&quot;.+?&quot;&quot;@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$" Display="Static"></asp:RegularExpressionValidator>--%>
-
+                     <%-- 4 Kontroller som jobbar mot Insert och validationgroup="Update". --%>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator4" runat="server" ErrorMessage="Förnamn fältet får ej lämnas tomt." ControlToValidate="FirstName" Text="*" ValidationGroup="Update"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator5" runat="server" ErrorMessage="Efternamn fältet får ej lämnas tomt." ControlToValidate="LastName" Text="*" ValidationGroup="Update"></asp:RequiredFieldValidator>
+                    <asp:RequiredFieldValidator ID="RequiredFieldValidator6" runat="server" ErrorMessage="E-Post fältet får ej lämnas tomt." ControlToValidate="EmailAddress" Text="*" ValidationGroup="Update"></asp:RequiredFieldValidator>
+                    <asp:RegularExpressionValidator ID="RegularExpressionValidator2" runat="server" ErrorMessage="RegularExpressionValidator" ControlToValidate="EmailAddress" ValidationGroup="Update" 
+                        ValidationExpression="^[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,4}$" 
+                        Display="Dynamic"></asp:RegularExpressionValidator>
 
                     <%-- Här redigerar jag kunduppgifter. samma ID men funkar eftersom dem inte används samtidigt som insertitemtemplate --%>
                     <tr>
@@ -121,7 +135,7 @@
                         </td>
                         <td>
                             <%-- Knappar för uppdatera en kunduppgift och avbryta. --%>
-                            <asp:LinkButton runat="server" CommandName="Update" Text="Spara"></asp:LinkButton>
+                            <asp:LinkButton runat="server" CommandName="Update" Text="Spara" ValidationGroup="Update"></asp:LinkButton>
                             <asp:LinkButton runat="server" CommandName="Cancel" Text="Ångra" CausesValidation="false"></asp:LinkButton>
                         </td>
                     </tr>

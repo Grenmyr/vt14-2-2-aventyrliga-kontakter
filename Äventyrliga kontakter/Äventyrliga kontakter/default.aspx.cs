@@ -18,9 +18,31 @@ namespace Äventyrliga_kontakter
         {
             get { return _service ?? (_service = new Service()); }
         }
+
+        // Property to Save my confirmationmessage from previous session. After used it delete the sessionmsg.
+        public string SessionProp
+        {
+            get
+            {
+                var confirmationMessage = Session["text"] as string;
+                Session.Remove("text");
+                return confirmationMessage;
+            }
+
+            set { Session["text"] = value; }
+        }
+        private bool HasMessage
+        {
+            get { return Session["text"] != null; }
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
-           
+            if (HasMessage) 
+            {
+                PlaceHolder.Visible = true;
+                ConfirmationMessage.Text = SessionProp;
+            }
         }
         // Genererar alla kontakter.
         public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData(int maximumRows, int startRowIndex, out int totalRowCount)
@@ -36,6 +58,7 @@ namespace Äventyrliga_kontakter
                 try
                 {
                     Service.SaveContact(contact);
+                    SessionProp = String.Format("Du har laddat upp | Förnamn: {0} | EfterNamn: {1} | E-Post: {2} |", contact.FirstName, contact.LastName, contact.EmailAddress);
                 }
                 catch (Exception)
                 {
@@ -43,28 +66,29 @@ namespace Äventyrliga_kontakter
                 }
                 Response.RedirectToRoute("contact");
             }
-
         }
 
         // The id parameter name should match the DataKeyNames value set on the control
-        public void ContactListView_UpdateItem(Contact contact)
+        public void ContactListView_UpdateItem(int contactId)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    //var contact = Service.GetContact(contactId);
-                    //if (Service.GetContact(contactId) == null)
-                    //{
-                    //    ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
-                    //    return;
-                    //}
-
-                    // Chanser, tryupdatemodel Validerar objktet Contact, eftersom vi hämtar det från server.
+                    var contact = Service.GetContact(contactId);
+                    if (contact == null)
+                    {
+                        ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
+                        return;
+                    }
+                   
+                    // //Chanser, tryupdatemodel Validerar objktet Contact, eftersom vi hämtar det från server.
                     if (TryUpdateModel(contact))
                     {
                         Service.SaveContact(contact);
                     }
+                    PlaceHolder.Visible = true;
+                    ConfirmationMessage.Text = String.Format(" Efter Redigering är uppgifterna | Förnamn: {0} | EfterNamn: {1} | E-Post: {2} | sparade.", contact.FirstName, contact.LastName, contact.EmailAddress);
                 }
                 catch (Exception)
                 {
