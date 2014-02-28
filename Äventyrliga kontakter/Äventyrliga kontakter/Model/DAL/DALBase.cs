@@ -15,6 +15,7 @@ namespace Äventyrliga_kontakter.Model.DAL
 
         static DALBase() 
         {
+            // Setting my Connectionstring, and since its a static field it will not be able to be changed.
             _connectionString = WebConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
         }
 

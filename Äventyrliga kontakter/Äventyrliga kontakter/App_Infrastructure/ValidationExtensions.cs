@@ -8,7 +8,7 @@ namespace Äventyrliga_kontakter
 {
     public static class ValidationExtensions
     {
-        // Works aproximatly, This is extension method to my Validation on Contact Objects.
+        // Works aproximatly, This is extension so i can use it to Validate Contact Objects.
         public static bool Validate<Contact>(this Contact instance, out ICollection<ValidationResult> validationResults)
         {
             var validationContext = new ValidationContext(instance);

@@ -8,11 +8,12 @@ namespace Äventyrliga_kontakter
 {
     public class RouteConfig
     {
+        // Extensionclass to "hide" page source. Using 2 atm error and Contact.
         public static void SetRoute(RouteCollection route)
         {
-            route.MapPageRoute("contact", "Start", "~/default.aspx");
-            route.MapPageRoute("Start", "Start", "~/default.aspx");
-            route.MapPageRoute("error", "Error", "~/");
+            route.MapPageRoute("error", "Error", "~/error.aspx");
+            route.MapPageRoute("Start", "kontakter", "~/default.aspx");
+            route.MapPageRoute("Default", "", "~/default.aspx");
         }
     }
 }

@@ -18,26 +18,27 @@ namespace Äventyrliga_kontakter.Model
             get { return _contactDAL ?? (_contactDAL = new ContactDAL()); }
         }
 
+
         public void DeleteContact(Contact contact)
         {
-            // TODO:
+            // Not implemented
         }
 
         public void DeleteContact(int contactId)
         {
             ContactDAL.DeleteContact(contactId);
         }
-        /// Hämtar en kund med ett specifikt kontaktid från databasen.
+        /// Method used to get a coustumer by using primary key.
         public Contact GetContact(int contactId)
         {
             return ContactDAL.GetContactById(contactId);
 
         }
         /// Hämtar alla kontrakt som finns lagrade i databasen.
-        public IEnumerable<Contact> GetContacts()
-        {
-            return ContactDAL.GetContacts();
-        }
+        //public IEnumerable<Contact> GetContacts()
+        //{
+        //    return ContactDAL.GetContacts();
+        //}
 
         public IEnumerable<Contact> GetContactsPageWise(int maximumRows, int startRowIndex, out int totalRowCount)
         {
@@ -46,11 +47,13 @@ namespace Äventyrliga_kontakter.Model
 
         public void SaveContact(Contact contact)
         {
-            
             // Kontrollerar att contact objkt går igenom validation innan jag sätter in kontakten. Om ID är 0 så är det en ny kontakt.
             ICollection<ValidationResult> validationresults;
-            if (contact.Validate(out validationresults))
+            if (!contact.Validate(out validationresults))
             {
+                throw new ApplicationException();
+            }
+
             if (contact.ContactId == 0)
             {
                 ContactDAL.InsertContact(contact);
@@ -58,7 +61,6 @@ namespace Äventyrliga_kontakter.Model
             else
             {
                 ContactDAL.UpdateContact(contact);
-            }
             }
         }
     }

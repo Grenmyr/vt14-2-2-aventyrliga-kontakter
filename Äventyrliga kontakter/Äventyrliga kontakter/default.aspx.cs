@@ -11,15 +11,13 @@ namespace Äventyrliga_kontakter
     public partial class _default : System.Web.UI.Page
     {
         private Service _service;
-
-
-        // Egenskap för skapa Service referens endast om det behövs.
+        // Property to return a Servince reference, if null create new one.
         private Service Service
         {
             get { return _service ?? (_service = new Service()); }
         }
 
-        // Property to Save my confirmationmessage from previous session. After used it delete the sessionmsg.
+        // Property to Save my confirmationmessage from previous session. When Getting from Property it also delete the sessionmsg.
         public string SessionProp
         {
             get
@@ -28,7 +26,6 @@ namespace Äventyrliga_kontakter
                 Session.Remove("text");
                 return confirmationMessage;
             }
-
             set { Session["text"] = value; }
         }
         private bool HasMessage
@@ -38,13 +35,13 @@ namespace Äventyrliga_kontakter
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (HasMessage) 
+            if (HasMessage)
             {
                 PlaceHolder.Visible = true;
                 ConfirmationMessage.Text = SessionProp;
             }
         }
-        // Genererar alla kontakter.
+        // Method to generate all Contacts pagewise.
         public IEnumerable<Äventyrliga_kontakter.Model.Contact> ContactListView_GetData(int maximumRows, int startRowIndex, out int totalRowCount)
         {
             //var fullContactList = Service.GetContacts();
@@ -71,33 +68,31 @@ namespace Äventyrliga_kontakter
         // The id parameter name should match the DataKeyNames value set on the control
         public void ContactListView_UpdateItem(int contactId)
         {
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var contact = Service.GetContact(contactId);
+                if (contact == null)
                 {
-                    var contact = Service.GetContact(contactId);
-                    if (contact == null)
-                    {
-                        ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
-                        return;
-                    }
-                   
-                    // //Chanser, tryupdatemodel Validerar objktet Contact, eftersom vi hämtar det från server.
-                    if (TryUpdateModel(contact))
-                    {
-                        Service.SaveContact(contact);
-                    }
-                    PlaceHolder.Visible = true;
-                    ConfirmationMessage.Text = String.Format(" Efter Redigering är uppgifterna | Förnamn: {0} | EfterNamn: {1} | E-Post: {2} | sparade.", contact.FirstName, contact.LastName, contact.EmailAddress);
+                    ModelState.AddModelError(String.Empty, "Fel inträffade när kontaktuppgift skulle Sparas.");
+                    return;
                 }
-                catch (Exception)
+
+                // Not really Neassary but i use Tryupdatemodel on my newly created contact object.
+                if (TryUpdateModel(contact))
                 {
-                    ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Sparas.");
+                    Service.SaveContact(contact);
                 }
+                // Confirmationmessage, could used redirect and sessionmessage but chosed not to.
+                PlaceHolder.Visible = true;
+                ConfirmationMessage.Text = String.Format(" Efter Redigering är uppgifterna | Förnamn: {0} | EfterNamn: {1} | E-Post: {2} | sparade.", contact.FirstName, contact.LastName, contact.EmailAddress);
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Sparas.");
             }
         }
 
-        // The id parameter name should match the DataKeyNames value set on the control
+        // The id parameter name should match the DataKeyNames value set on the control.
         public void ContactListView_DeleteItem(int contactId)
         {
             try
@@ -108,6 +103,11 @@ namespace Äventyrliga_kontakter
             {
                 ModelState.AddModelError(String.Empty, "Fel inträffade när Kunduppgift skulle Raderas.");
             }
+        }
+
+        protected void ContactListView_PagePropertiesChanged(object sender, EventArgs e)
+        {
+            ContactListView.EditIndex = -1;
         }
 
 
